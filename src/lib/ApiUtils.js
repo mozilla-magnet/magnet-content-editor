@@ -27,6 +27,10 @@ const ApiUtils = {
         return beacons;
       });
   },
+  updateBeacon(channelId, beacon) {
+    this._init();
+    return _client.updateBeacon(channelId, beacon);
+  },
   _init: function() {
     if (_client === null) {
       _client =  createClient();

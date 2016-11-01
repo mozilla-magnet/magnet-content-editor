@@ -8,7 +8,7 @@ import configureStore from './store/configureStore';
 
 localStorage.setItem('api', JSON.stringify({"host":"http://localhost:3000","auth": "test"}));
 
-const store = configureStore();
+const store = configureStore(browserHistory);
 const history = syncHistoryWithStore(browserHistory, store);
 
 // For fb.me/react-devtools

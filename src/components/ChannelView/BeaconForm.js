@@ -3,99 +3,83 @@ import { List, ListItem } from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
+import { Field, reduxForm } from 'redux-form';
 
-export default class BeaconForm extends Component {
-  static propTypes = {
-    beacon: PropTypes.object
-  };
+const renderTextField = ({input, label, meta: { touched, error }, ...custom }) => {
+  return (
+    <TextField
+      hintText={label}
+      floatingLabelText={label}
+      {...input}
+      {...custom}
+    />
+  );
+};
 
-  renderIdField(id) {
+class BeaconForm extends Component {
+
+  renderSaveButton(beaconIsDirty, handleSubmit) {
     return (
-      <TextField
-        disabled={true}
-        hintText="Beacon ID"
-        defaultValue={id}
-        floatingLabelText="Beacon ID"
+      <RaisedButton
+        type="submit"
+        label="Save"
+        fullWidth={true}
+        disabled={!beaconIsDirty}
+        onClick={handleSubmit}
       />
     );
   }
 
-  renderUrlField(url) {
-    return (
-      <TextField
-        disabled={false}
-        hintText="URL"
-        value={url}
-        floatingLabelText="URL"
-        onChange={this._handleUrlFieldChange.bind(this)}
-        errorText={this.state.urlValidationError ? "Required" : ""}
-      />
-    );
-  }
-
-  renderLocation(location) {
-    const locationString = `${location.latitude}, ${location.longitude}`;
-    return (
-      <TextField
-        disabled={true}
-        hintText="Location"
-        value={locationString}
-        floatingLabelText="Location"
-      />
-    );
-  }
-
-  renderSaveButton(beaconIsDirty) {
-    return (
-      <div>
-        <RaisedButton label="Save" fullWidth={true}  disabled={!beaconIsDirty} />
-      </div>
-    );
-  }
-
-  renderResetButton() {
+  renderResetButton(handleReset) {
     return (
       <RaisedButton
         label="Reset"
         fullWidth={true}
         secondary={true}
-        onClick={this._handleResetClick.bind(this)}
+        onClick={handleReset}
       />
     );
   }
 
-  _handleUrlFieldChange(target, newValue) {
-    const beaconId = this.props.beacon.id;
-
-    if (newValue.length === 0) {
-      this.setState({ urlValidationError: true });
-    } else {
-      this.setState({ urlValidationError: false });
-    }
-
-  }
-
-  _handleResetClick() {
-    const beaconId = this.props.beacon.id;
+  formatLocation(value, name) {
+    return `${value.latitude}, ${value.longitude}`;
   }
 
   render() {
-    const { id, url, location, dirty, } = this.props.beacon;
-    return (
-      <MuiThemeProvider>
-        <List>
-          <ListItem disabled={true} children={this.renderIdField(id)} />
-          <ListItem disabled={true} children={this.renderUrlField(url)} />
-          <ListItem disabled={true} children={this.renderLocation(location)} />
-          <ListItem disabled={true} children={this.renderSaveButton(dirty)} />
+    const { handleReset, handleSubmit, pristine, reset, submitting } = this.props;
 
-          {dirty ?
-            (<ListItem disabled={true} children={this.renderResetButton()} />)
-          :
-            (<div />)
-          }
-        </List>
-      </MuiThemeProvider>
+    return (
+        <form style={{margin: 10}} onSubmit={handleSubmit}>
+          <Field
+            name="id"
+            component={renderTextField}
+            label="Beacon ID"
+            disabled={true}
+          />
+          <Field
+            name="url"
+            component={renderTextField}
+            label="URL"
+          />
+          <Field
+            name="location"
+            component={renderTextField}
+            label="Location"
+            format={this.formatLocation}
+            disabled={true}
+          />
+          <div>
+            {this.renderSaveButton(!(pristine || submitting))}
+          </div>
+          <div>
+            {!pristine ?
+              (this.renderResetButton(reset)) : (<div />)}
+          </div>
+        </form>
     );
   }
 }
+
+export default reduxForm({
+  form: 'beaconeditform',
+})(BeaconForm);

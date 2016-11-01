@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import * as ActionTypes from '../actions';
+import { reducer as formReducer } from 'redux-form'
 
 function channels(state = {}, action) {
   switch (action.type) {
@@ -40,6 +41,13 @@ function beacons(state = {}, action) {
         map[beacon.id] = beacon;
         return map;
       }, {});
+    case ActionTypes.EDIT_BEACON_LOCATION:
+      const { beaconId, newLocation } = action;
+      const newState = Object.assign({}, state);
+
+      newState[beaconId].location = newLocation;
+      newState[beaconId].dirty = true;
+      return newState;
     default:
       return state;
   };
@@ -57,11 +65,36 @@ function loadingState(state = 0, action) {
   return state;
 }
 
+function beaconEditState(state = false, action) {
+  switch(action.type) {
+    case ActionTypes.OPEN_BEACON_EDITOR:
+      return true;
+    case ActionTypes.CLOSE_BEACON_EDITOR:
+      return false;
+    default:
+      return state;
+  }
+}
+
+function displayingBeaconSaved(state = false, action) {
+  switch(action.type) {
+    case ActionTypes.BEACON_SAVED:
+      return true;
+    case ActionTypes.HIDE_BEACON_SAVED_MESSAGE:
+      return false;
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   channels,
   beacons,
   loadingState,
+  beaconEditState,
+  displayingBeaconSaved,
   routing: routerReducer,
+  form: formReducer,
 });
 
 export default rootReducer;

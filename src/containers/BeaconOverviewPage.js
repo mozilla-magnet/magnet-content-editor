@@ -1,16 +1,30 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import ChannelView from '../components/ChannelView';
-import { fetchBeaconsForChannel } from '../actions';
+import {
+  fetchBeaconsForChannel, openBeaconEditor,
+  closeBeaconEditor, editBeaconLocation,
+} from '../actions';
+import {
+  push
+} from 'react-router-redux';
 
 class BeaconOverviewPage extends Component {
   componentDidMount() {
     this.props.fetchBeaconsForChannel(this.props.channelName);
   }
 
+  _handleBeaconClick(beacon, event) {
+    this.props.push(`/channel/${this.props.channelName}/${beacon.id}`);
+    event.originalEvent.preventDefault();
+  }
+
   render() {
     return (
-      <ChannelView beacons={this.props.beacons} />
+      <ChannelView
+        beacons={this.props.beacons}
+        onBeaconClick={this._handleBeaconClick.bind(this)}
+      />
     );
   }
 }
@@ -35,5 +49,6 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default connect(mapStateToProps, {
-  fetchBeaconsForChannel
+  fetchBeaconsForChannel,
+  push,
 })(BeaconOverviewPage);
