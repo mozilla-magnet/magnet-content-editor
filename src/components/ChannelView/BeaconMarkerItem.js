@@ -5,7 +5,6 @@ import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import BeaconForm from './BeaconForm';
-import BeaconActions from '../../actions/BeaconActions';
 
 export default class BeaconMarkerItem extends Component {
   static propTypes = {
@@ -13,7 +12,6 @@ export default class BeaconMarkerItem extends Component {
   };
 
   _handleDragEnd(beaconId, event) {
-    BeaconActions.moveBeacon(beaconId, event.target);
   }
 
   render() {

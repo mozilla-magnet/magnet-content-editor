@@ -3,7 +3,6 @@ import { List, ListItem } from 'material-ui/List';
 import TextField from 'material-ui/TextField';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
-import BeaconActions from '../../actions/BeaconActions';
 
 export default class BeaconForm extends Component {
   static propTypes = {
@@ -26,8 +25,10 @@ export default class BeaconForm extends Component {
       <TextField
         disabled={false}
         hintText="URL"
-        defaultValue={url}
+        value={url}
         floatingLabelText="URL"
+        onChange={this._handleUrlFieldChange.bind(this)}
+        errorText={this.state.urlValidationError ? "Required" : ""}
       />
     );
   }
@@ -38,7 +39,7 @@ export default class BeaconForm extends Component {
       <TextField
         disabled={true}
         hintText="Location"
-        defaultValue={locationString}
+        value={locationString}
         floatingLabelText="Location"
       />
     );
@@ -63,15 +64,23 @@ export default class BeaconForm extends Component {
     );
   }
 
+  _handleUrlFieldChange(target, newValue) {
+    const beaconId = this.props.beacon.id;
+
+    if (newValue.length === 0) {
+      this.setState({ urlValidationError: true });
+    } else {
+      this.setState({ urlValidationError: false });
+    }
+
+  }
+
   _handleResetClick() {
     const beaconId = this.props.beacon.id;
-    console.log('reset click');
-    BeaconActions.resetBeacon(beaconId);
   }
 
   render() {
     const { id, url, location, dirty, } = this.props.beacon;
-
     return (
       <MuiThemeProvider>
         <List>

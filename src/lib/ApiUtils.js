@@ -1,6 +1,4 @@
 import ApiClient from './apiclient';
-import MagnetServerActions from '../actions/MagnetServerActions';
-
 let _client = null;
 
 function createClient() {
@@ -17,16 +15,16 @@ const ApiUtils = {
   getAllChannels: function() {
     this._init();
 
-    _client.getChannels()
+   return _client.getChannels()
       .then((channels) => {
-        MagnetServerActions.receiveChannels(channels);
+        return channels;
       });
   },
   getBeaconsForChannel(channelId) {
     this._init();
-    _client.getBeaconsForChannel(channelId)
+    return _client.getBeaconsForChannel(channelId)
       .then((beacons) => {
-        MagnetServerActions.receiveBeacons(channelId, beacons);
+        return beacons;
       });
   },
   _init: function() {
